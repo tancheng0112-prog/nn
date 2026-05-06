@@ -183,9 +183,8 @@ def set_solver_iter(env, n_iter):
 ### 7.1 整体架构（三层闭环）
 本项目采用典型的“环境-模型-部署”三层架构：
   
-<div align="center">
-  <img src="jiagoutu.png" alt="整体架构（三层闭环）" width="300">
-</div>
+<img width="626" height="1093" alt="image" src="https://github.com/user-attachments/assets/7c587cf0-e835-461b-8bbd-6d80d5e27578" />
+
 
 ### 7.2 核心模块职责
    | 模块名              | 核心输入                  | 核心输出              | 关键功能                                       |
@@ -198,12 +197,8 @@ def set_solver_iter(env, n_iter):
 ## 八、运行结果、不足与优化方向
 
 ### 8.1 运行结果图片
-
-<div align="center">
-  <img src="1.png" width="80%" alt="优化前效果">
-
-  <img src="2.png" width="80%" alt="优化后效果">
-</div>
+<img width="1439" height="980" alt="image" src="https://github.com/user-attachments/assets/22c0ee59-d417-4261-8d4c-78411e7c126f" />
+<img width="1084" height="846" alt="image" src="https://github.com/user-attachments/assets/53c4f874-4fff-4e93-9824-364c316a64a6" />
 
 ### 8.2 量化运行结果
 
