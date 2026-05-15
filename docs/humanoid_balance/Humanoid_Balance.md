@@ -29,8 +29,9 @@ SAC 的核心目标不只是最大化累积奖励，同时**最大化策略熵**
 
 #### 3.2.1 最大熵目标函数
 SAC 的核心优化目标为最大化累积折扣奖励与策略熵的加权和，目标函数定义如下：
+
 $$
-J(\pi)=\mathbb{E}_{(s_t,a_t)\sim\mathcal{D}}\left[ r(s_t,a_t) + \gamma \mathbb{E}_{s_{t+1}}\left[ V^\pi(s_{t+1}) \right] - \alpha \log\pi(a_t|s_t) \right]
+J(\pi) = \mathbb{E}_{(s_t,a_t)\sim\mathcal{D}} \left[ r(s_t,a_t) + \gamma \mathbb{E}_{s_{t+1}} \left[ V^\pi(s_{t+1}) \right] - \alpha \log \pi(a_t|s_t) \right]
 $$
 
 **符号说明：**
@@ -42,25 +43,36 @@ $$
 - $\mathcal{D}$：经验回放池，存储历史交互数据。
 
 #### 3.2.2 状态值函数
-状态值函数 \( V^\pi(s) \) 定义为在策略 \( \pi \) 下，从状态 \( s \) 出发，所有可能动作对应的动作值函数与策略熵项之差的期望，即：
+
+状态值函数 $V^\pi(s)$ 定义为在策略 $\pi$ 下，从状态 $s$ 出发，所有可能动作对应的动作值函数与策略熵项之差的期望，即：
+
 $$
-V^\pi(s) = \mathbb{E}_{a\sim\pi} \left[ Q^\pi(s,a) - \alpha \log \pi(a|s) \right]
+V^\pi(s) = \mathbb{E}_{a \sim \pi} \left[ Q^\pi(s,a) - \alpha \log \pi(a|s) \right]
 $$
-该函数将动作值函数与策略熵结合，反映了在考虑探索性（熵项）的前提下，状态 \( s \) 的综合价值。
+
+该函数将动作值函数与策略熵结合，反映了在考虑探索性（熵项）的前提下，状态 $s$ 的综合价值。
+
 
 #### 3.2.3 动作值函数（Q 函数）
-动作值函数 \( Q^\pi(s,a) \) 表示在状态 \( s \) 执行动作 \( a \)，并遵循策略 \( \pi \) 后续动作的累积折扣奖励期望，其递推关系为：
+
+动作值函数 $Q^\pi(s,a)$ 表示在状态 $s$ 执行动作 $a$，并遵循策略 $\pi$ 后续动作的累积折扣奖励期望，其递推关系为：
+
 $$
-Q^\pi(s,a) = r(s,a) + \gamma \mathbb{E}_{s'\sim p} \left[ V^\pi(s') \right]
+Q^\pi(s,a) = r(s,a) + \gamma \mathbb{E}_{s' \sim p} \left[ V^\pi(s') \right]
 $$
-其中，\( r(s,a) \) 为即时奖励，\( \gamma \) 为折扣因子，\( V^\pi(s') \) 为下一状态的状态值函数。
+
+其中，$r(s,a)$ 为即时奖励，$\gamma$ 为折扣因子，$V^\pi(s')$ 为下一状态的状态值函数。
+
 
 #### 3.2.4 策略网络（重参数化）
+
 SAC 采用重参数化技巧实现连续动作的可微采样，避免直接对策略梯度估计带来的高方差问题。策略网络通过对高斯分布采样实现动作生成：
+
 $$
 a_t = f_\phi(\epsilon_t; s_t), \quad \epsilon_t \sim \mathcal{N}(0, I)
 $$
-其中，\( f_\phi \) 为参数化策略网络，\( \epsilon_t \) 为从标准正态分布中采样的噪声变量。该方法将随机采样过程转化为确定性函数，从而保证梯度能够通过采样过程反向传播，实现端到端优化。
+
+其中，$f_\phi$ 为参数化策略网络，$\epsilon_t$ 为从标准正态分布中采样的噪声变量。该方法将随机采样过程转化为确定性函数，从而保证梯度能够通过采样过程反向传播，实现端到端优化。
 
 ### 3.3 SAC 网络结构
 本项目采用经典的 **Actor-Critic 双网络架构**，核心包含三类网络：
@@ -145,7 +157,7 @@ critic.load_state_dict(model_weights["critic"], strict=False)
 本项目采用典型的“环境-模型-部署”三层架构：
   
 <div align="center">
-  <img src="jiagoutu.png" alt="整体架构（三层闭环）" width="300"><p>图1 系统整体三层架构图</p>
+  <img width="626" height="1093" alt="image" src="https://github.com/user-attachments/assets/7c587cf0-e835-461b-8bbd-6d80d5e27578" /><p>图1 系统整体三层架构图</p>
 </div>
 
 ### 5.2 核心模块职责
@@ -183,9 +195,11 @@ critic.load_state_dict(model_weights["critic"], strict=False)
 ### 6.3 可视化结果
 优化前后机器人运动状态对比图如下：
 
-<div align="center" style="font-size: 14px; color: #333;"><img src="1.png" width="70%" alt="优化前效果" style="border: none; margin: 5px 0;"><p>图2 优化前：机器人无法稳定站立，原地高频抖动</p>
+<div align="center">
+<img width="1439" height="980" alt="image" src="https://github.com/user-attachments/assets/22c0ee59-d417-4261-8d4c-78411e7c126f" /><p>图2 优化前：机器人无法稳定站立，原地高频抖动</p> 
 
-<img src="2.png" width="70%" alt="优化后效果" style="border: none; margin: 10px 0;"><p>图3 优化后：机器人稳定站立并完成小步行走</p></div>
+<img width="1084" height="846" alt="image" src="https://github.com/user-attachments/assets/53c4f874-4fff-4e93-9824-364c316a64a6" /><p>图3 优化后：机器人稳定站立并完成小步行走</p>
+</div>
 
 ### 6.4 关键优化手段效果
 | 优化手段 | 实现逻辑 | 效果 |
@@ -246,17 +260,17 @@ Humanoid_Balance/
 
 ### 8.2后续优化方向
 1.  **课程学习（Curriculum Learning）**：
-    - 阶段1：训练纯站立平衡（奖励函数聚焦质心高度、关节角度偏差）；
-    - 阶段2：训练小步原地行走（限制步长，奖励前移距离）；
-    - 阶段3：训练长距离行走（放开步长限制，加入速度奖励）。
+     阶段1：训练纯站立平衡（奖励函数聚焦质心高度、关节角度偏差）；
+     阶段2：训练小步原地行走（限制步长，奖励前移距离）；
+     阶段3：训练长距离行走（放开步长限制，加入速度奖励）。
 
 2.  **奖励函数精修**：
-    - 新增足端压力（Foot Pressure）反馈项，惩罚“脚尖点地/悬空”；
-    - 新增关节平滑项，惩罚相邻步动作差值过大，进一步抑制抖动。
-    - 未来奖励：计划引入对称性奖励（鼓励左右腿交替）和足端接触力平稳项，以抑制目前在视频中观察到的高频震荡。(当前奖励：$Reward = f(前向速度) - f(控制能耗)$)
+     新增足端压力（Foot Pressure）反馈项，惩罚“脚尖点地/悬空”；
+     新增关节平滑项，惩罚相邻步动作差值过大，进一步抑制抖动。
+     未来奖励：计划引入对称性奖励（鼓励左右腿交替）和足端接触力平稳项，以抑制目前在视频中观察到的高频震荡。(当前奖励：$Reward = f(前向速度) - f(控制能耗)$)
 3.  **技术升级**：
-     - 在线微调：基于当前权重在Humanoid-v4继续训练 100k 步，对齐参数并适应新版物理特性；
-     - 控制方式升级：从力矩控制升级为准直接位置控制，提升关节刚度与运动精度。
+      在线微调：基于当前权重在Humanoid-v4继续训练 100k 步，对齐参数并适应新版物理特性；
+      控制方式升级：从力矩控制升级为准直接位置控制，提升关节刚度与运动精度。
 
 
 ## 9 总结
